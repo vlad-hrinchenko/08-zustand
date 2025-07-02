@@ -1,90 +1,82 @@
 "use client";
 
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useNoteStore } from "@/lib/store/noteStore";
+import { useState, useEffect, FormEvent } from "react";
+import styles from "./NoteForm.module.css";
 import { createNote } from "@/lib/api";
-import type { NoteTag } from "@/types/note";
-import css from "./NoteForm.module.css";
+import { NoteTag } from "@/types/note";
 
-interface NoteFormProps {
-  onClose: () => void;
-}
+export default function NoteForm() {
+  const router = useRouter();
+  const { draft, setDraft, clearDraft } = useNoteStore();
 
-const tags: NoteTag[] = ["Todo", "Work", "Personal", "Meeting", "Shopping"];
+  const [title, setTitle] = useState(draft.title);
+  const [content, setContent] = useState(draft.content);
+  const [tag, setTag] = useState<NoteTag>(draft.tag);
 
-export default function NoteForm({ onClose }: NoteFormProps) {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [tag, setTag] = useState<NoteTag>("Todo");
+  useEffect(() => {
+    setDraft({ title, content, tag });
+  }, [title, content, tag, setDraft]);
 
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: createNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-      onClose();
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutation.mutate({ title, content, tag });
+    try {
+      await createNote({ title, content, tag });
+      clearDraft();
+      router.back();
+    } catch (err) {
+      console.error("Error creating note", err);
+    }
   };
 
   return (
-    <form className={css.form} onSubmit={handleSubmit}>
-      <label className={css.label}>
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <label className={styles.label}>
         Title
         <input
-          className={css.input}
           type="text"
+          className={styles.input}
           value={title}
-          required
           onChange={(e) => setTitle(e.target.value)}
+          required
         />
       </label>
 
-      <label className={css.label}>
+      <label className={styles.label}>
         Content
         <textarea
-          className={css.textarea}
+          className={styles.textarea}
           value={content}
-          required
           onChange={(e) => setContent(e.target.value)}
         />
       </label>
 
-      <label className={css.label}>
+      <label className={styles.label}>
         Tag
         <select
-          className={css.select}
+          className={styles.select}
           value={tag}
           onChange={(e) => setTag(e.target.value as NoteTag)}
         >
-          {tags.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
+          <option value="Todo">Todo</option>
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Meeting">Meeting</option>
+          <option value="Shopping">Shopping</option>
         </select>
       </label>
 
-      <div className={css.actions}>
-        <button
-          className={css.cancel}
-          type="button"
-          onClick={onClose}
-          disabled={mutation.isPending}
-        >
-          Cancel
+      <div className={styles.actions}>
+        <button type="submit" className={styles.button}>
+          Save
         </button>
         <button
-          className={css.button}
-          type="submit"
-          disabled={mutation.isPending}
+          type="button"
+          onClick={() => router.back()}
+          className={styles.cancel}
         >
-          {mutation.isPending ? "Creating..." : "Create"}
+          Cancel
         </button>
       </div>
     </form>

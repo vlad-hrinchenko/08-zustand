@@ -10,3 +10,20 @@ export default function NotFound() {
     </main>
   );
 }
+
+export const metadata = {
+  title: "Сторінку не знайдено — NoteHub",
+  description:
+    "На жаль, такої сторінки не існує. Перевірте адресу і спробуйте ще раз.",
+  openGraph: {
+    title: "Сторінку не знайдено — NoteHub",
+    description:
+      "На жаль, такої сторінки не існує. Перевірте адресу і спробуйте ще раз.",
+    url: "https://your-site-url.com/404",
+    images: [
+      {
+        url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+      },
+    ],
+  },
+};
