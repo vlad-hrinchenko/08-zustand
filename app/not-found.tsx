@@ -1,25 +1,12 @@
-import css from "./not-found.module.css";
+import type { Metadata } from "next";
 
-export default function NotFound() {
-  return (
-    <main className={css.container}>
-      <h1 className={css.title}>404 - Page not found</h1>
-      <p className={css.description}>
-        Sorry, the page you are looking for does not exist.
-      </p>
-    </main>
-  );
-}
-
-export const metadata = {
+export const metadata: Metadata = {
   title: "Сторінку не знайдено — NoteHub",
-  description:
-    "На жаль, такої сторінки не існує. Перевірте адресу і спробуйте ще раз.",
+  description: "Ця сторінка не існує. Можливо, ви ввели неправильну адресу.",
   openGraph: {
     title: "Сторінку не знайдено — NoteHub",
-    description:
-      "На жаль, такої сторінки не існує. Перевірте адресу і спробуйте ще раз.",
-    url: "https://your-site-url.com/404",
+    description: "Ця сторінка не існує. Можливо, ви ввели неправильну адресу.",
+    url: "https://your-site-url.com/not-found",
     images: [
       {
         url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
@@ -27,3 +14,7 @@ export const metadata = {
     ],
   },
 };
+
+export default function NotFoundPage() {
+  return <h1>Сторінку не знайдено</h1>;
+}

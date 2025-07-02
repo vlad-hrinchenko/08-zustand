@@ -1,11 +1,12 @@
 import { fetchNotes } from "@/lib/api";
 import NotesClient from "./Notes.client";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
 }: {
   params: { slug?: string[] };
-}) {
+}): Promise<Metadata> {
   const tag = params.slug?.[0] || "All";
 
   const title = `Фільтр: ${tag} — NoteHub`;

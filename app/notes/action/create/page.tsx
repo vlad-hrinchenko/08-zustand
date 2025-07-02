@@ -1,13 +1,12 @@
-import NoteForm from "@/components/NoteForm/NoteForm";
-import styles from "./CreateNote.module.css";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Створити нотатку — NoteHub",
   description: "Сторінка створення нової нотатки у застосунку NoteHub.",
   openGraph: {
     title: "Створити нотатку — NoteHub",
     description: "Сторінка створення нової нотатки у застосунку NoteHub.",
-    url: "https://08-zustand.vercel.app/notes/action/create", // ✅ твоя реальна URL
+    url: "https://your-site-url.com/notes/action/create",
     images: [
       {
         url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
@@ -15,14 +14,3 @@ export const metadata = {
     ],
   },
 };
-
-export default function CreateNotePage() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.container}>
-        <h1 className={styles.title}>Create note</h1>
-        <NoteForm />
-      </div>
-    </main>
-  );
-}

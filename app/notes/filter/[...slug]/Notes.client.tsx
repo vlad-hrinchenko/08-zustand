@@ -10,6 +10,7 @@ import SearchBox from "@/components/SearchBox/SearchBox";
 import NoteForm from "@/components/NoteForm/NoteForm";
 import { fetchNotes } from "@/lib/api";
 import type { Note } from "@/types/note";
+import Link from "next/link";
 
 interface NotesClientProps {
   notes: Note[];
@@ -59,7 +60,9 @@ export default function NotesClient({
             onPageChange={setPage}
           />
         )}
-        <button onClick={() => setIsModalOpen(true)}>Create note +</button>
+        <Link href="/notes/action/create">
+          <button>Create note +</button>
+        </Link>
       </header>
 
       {isLoading && <p>Loading notes...</p>}

@@ -1,28 +1,30 @@
 import { fetchNoteById } from "@/lib/api";
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
-import NotePreview from "../../../components/NotePreview/NotePreview";
+import type { Metadata } from "next";
+import type { Note } from "@/types/note";
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const note: Note | null = await fetchNoteById(Number(params.id));
 
-export default async function NoteModalPage({ params }: PageProps) {
-  const { id } = await params;
-  const noteId = Number(id);
+  const title = note ? `${note.title} — NoteHub` : "Нотатка — NoteHub";
+  const description =
+    note?.content?.slice(0, 100) || "Деталі нотатки у NoteHub.";
 
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ["note", noteId],
-    queryFn: () => fetchNoteById(noteId),
-  });
-
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <NotePreview noteId={noteId} />
-    </HydrationBoundary>
-  );
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://your-site-url.com/notes/${params.id}`,
+      images: [
+        {
+          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+        },
+      ],
+    },
+  };
 }
