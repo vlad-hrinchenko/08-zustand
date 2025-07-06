@@ -2,27 +2,19 @@
 
 import { useRouter } from "next/navigation";
 import { useNoteStore } from "@/lib/store/noteStore";
-import { useState, useEffect, FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import styles from "./NoteForm.module.css";
 import { createNote } from "@/lib/api";
-import type { NoteTag } from "@/types/note";
+import type { FormEvent } from "react";
 
 export default function NoteForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const { draft, setDraft, clearDraft } = useNoteStore();
-  const [title, setTitle] = useState(draft.title);
-  const [content, setContent] = useState(draft.content ?? "");
-  const [tag, setTag] = useState<NoteTag>(draft.tag);
-
-  useEffect(() => {
-    setDraft({ title, content, tag });
-  }, [title, content, tag, setDraft]);
 
   const mutation = useMutation({
-    mutationFn: () => createNote({ title, content, tag }),
+    mutationFn: () => createNote(draft),
     onSuccess: () => {
       clearDraft();
       queryClient.invalidateQueries({ queryKey: ["notes"] });
@@ -45,8 +37,8 @@ export default function NoteForm() {
         <input
           type="text"
           className={styles.input}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={draft.title}
+          onChange={(e) => setDraft({ title: e.target.value })}
           required
         />
       </label>
@@ -55,8 +47,8 @@ export default function NoteForm() {
         Content
         <textarea
           className={styles.textarea}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+          value={draft.content}
+          onChange={(e) => setDraft({ content: e.target.value })}
         />
       </label>
 
@@ -64,8 +56,10 @@ export default function NoteForm() {
         Tag
         <select
           className={styles.select}
-          value={tag}
-          onChange={(e) => setTag(e.target.value as NoteTag)}
+          value={draft.tag}
+          onChange={(e) =>
+            setDraft({ tag: e.target.value as typeof draft.tag })
+          }
         >
           <option value="Todo">Todo</option>
           <option value="Work">Work</option>
